@@ -179,7 +179,12 @@ class DashDeployApp(App):
         dialog = PasswordDialog()
         self.mount(dialog)
         self.refresh()
-        await dialog.wait_for_remove()  # Wait for the dialog to close
+        await self.wait_for_password()  # Wait for the password to be entered
+
+    async def wait_for_password(self) -> None:
+        """Wait for the password to be entered."""
+        while self.password is None:
+            await self.sleep(0.1)  # Wait for the password to be set
 
 if __name__ == "__main__":
     app = DashDeployApp()
