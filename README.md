@@ -34,7 +34,7 @@ Before using the Dash Deployment CLI, ensure you have the following:
 1. **Clone the Repository**:
    ```bash
    git clone https://github.com/studiozeroseven/dash_deploy.git
-   cd dash-deployment-cli
+   cd dash_deploy
    ```
 
 2. **Install Dependencies**:
