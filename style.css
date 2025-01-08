@@ -22,7 +22,7 @@ Footer {
 
 /* Center the main container */
 #main-container {
-    align: center middle;
+    align: center;
     width: 100%;
     height: 100%;
 }
@@ -31,14 +31,14 @@ Footer {
 Button {
     width: 50%;
     margin: 1 0; /* Vertical margin */
-    align: center middle; /* Center horizontally */
+    align: center; /* Center horizontally */
 }
 
 /* Center input fields */
 Input {
     width: 50%;
     margin: 1 0; /* Vertical margin */
-    align: center middle; /* Center horizontally */
+    align: center; /* Center horizontally */
 }
 
 /* Center labels */
