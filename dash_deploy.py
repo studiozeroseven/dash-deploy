@@ -1,5 +1,6 @@
 import os
 import subprocess
+from getpass import getpass
 from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.widgets import Header, Footer, Button, Input, Static, Label
@@ -7,12 +8,11 @@ from textual.widgets import Header, Footer, Button, Input, Static, Label
 class DashDeployApp(App):
     """A Textual CLI app to deploy a Dash app to an Ubuntu server."""
 
-    CSS_PATH = "style.css"  # Optional: Add custom styling
+    CSS_PATH = "style.css"
     BINDINGS = [("q", "quit", "Quit")]
 
     def compose(self) -> ComposeResult:
         """Compose the UI."""
-        self.theme = "nord"
         yield Header()
         yield Container(
             Label("Welcome to the Dash App Deployment CLI!", id="title"),
@@ -108,8 +108,13 @@ class DashDeployApp(App):
         return input()
 
     def run_command(self, command: str) -> None:
-        """Run a shell command and display the output."""
-        self.mount(Label(f"Running: {command}"))
+        """Run a shell command and handle sudo password prompts."""
+        if command.startswith("sudo"):
+            # Ask for sudo password
+            sudo_password = getpass("Enter sudo password: ")
+            command = f"echo '{sudo_password}' | sudo -S {command[5:]}"
+
+        # Run the command
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
         if result.returncode != 0:
             self.mount(Label(f"Error: {result.stderr}"))
