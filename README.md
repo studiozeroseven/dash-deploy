@@ -170,9 +170,9 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For questions or feedback, please open an issue on GitHub or contact the maintainer:
 
-- **Your Name**
-- **Email**: your.email@example.com
-- **GitHub**: [yourusername](https://github.com/yourusername)
+- **Ian Schwartz**
+- **Email**: ian@theapk.com
+- **GitHub**: [studiozeroseven](https://github.com/studiozeroseven)
 
 ---
 
