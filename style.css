@@ -1,0 +1,83 @@
+/* General styling for the app */
+Screen {
+    layout: vertical;
+    background: $background;
+    color: $text;
+}
+
+/* Header styling */
+Header {
+    background: $accent;
+    color: $background;
+    text-style: bold;
+    padding: 1;
+}
+
+/* Footer styling */
+Footer {
+    background: $accent-dark;
+    color: $background;
+    text-style: bold;
+    padding: 1;
+}
+
+/* Container for main content */
+#main-container {
+    padding: 1;
+    width: 100%;
+    align: center middle;
+}
+
+/* Title styling */
+#title {
+    text-style: bold;
+    color: $accent;
+    margin-bottom: 1;
+}
+
+/* Subtitle styling */
+#subtitle {
+    color: $text-muted;
+    margin-bottom: 2;
+}
+
+/* Button styling */
+Button {
+    width: 50%;
+    background: $accent;
+    color: $background;
+    text-style: bold;
+    margin: 1;
+}
+
+Button:hover {
+    background: $accent-dark;
+}
+
+/* Input field styling */
+Input {
+    width: 50%;
+    background: $surface;
+    color: $text;
+    border: round $accent;
+    margin: 1;
+}
+
+/* Label styling */
+Label {
+    width: 100%;
+    text-align: center;
+    margin: 1;
+}
+
+/* Error message styling */
+.error {
+    color: $error;
+    text-style: bold;
+}
+
+/* Success message styling */
+.success {
+    color: $success;
+    text-style: bold;
+}
