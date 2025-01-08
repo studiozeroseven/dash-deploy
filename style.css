@@ -1,29 +1,21 @@
-:root {
-    --my-background: #1e1e2e; /* Dark background */
-    --my-accent: #89b4fa;     /* Light blue accent */
-    --my-text: #cdd6f4;       /* Light text color */
-    --my-error: #f38ba8;      /* Red for errors */
-    --my-success: #a6e3a1;    /* Green for success */
-}
-
 /* General styling for the app */
 Screen {
-    background: var(--my-background);
-    color: var(--my-text);
+    background: #1e1e2e; /* Dark background */
+    color: #cdd6f4;      /* Light text color */
 }
 
 /* Header styling */
 Header {
-    background: var(--my-accent);
-    color: var(--my-background);
+    background: #89b4fa; /* Light blue accent */
+    color: #1e1e2e;      /* Dark background */
     text-style: bold;
     padding: 1;
 }
 
 /* Footer styling */
 Footer {
-    background: var(--my-accent);
-    color: var(--my-background);
+    background: #74c7ec; /* Slightly darker blue */
+    color: #1e1e2e;      /* Dark background */
     text-style: bold;
     padding: 1;
 }
@@ -38,36 +30,36 @@ Footer {
 /* Title styling */
 #title {
     text-style: bold;
-    color: var(--my-accent);
+    color: #89b4fa; /* Light blue accent */
     margin-bottom: 1;
 }
 
 /* Subtitle styling */
 #subtitle {
-    color: var(--my-text);
+    color: #a6adc8; /* Muted text color */
     margin-bottom: 2;
 }
 
 /* Button styling */
 Button {
     width: 50%;
-    background: var(--my-accent);
-    color: var(--my-background);
+    background: #89b4fa; /* Light blue accent */
+    color: #1e1e2e;      /* Dark background */
     text-style: bold;
     margin: 1;
 }
 
 Button:hover {
-    background: var(--my-text);
-    color: var(--my-background);
+    background: #74c7ec; /* Slightly darker blue */
+    color: #1e1e2e;      /* Dark background */
 }
 
 /* Input field styling */
 Input {
     width: 50%;
-    background: var(--my-background);
-    color: var(--my-text);
-    border: round var(--my-accent);
+    background: #313244; /* Darker surface color */
+    color: #cdd6f4;      /* Light text color */
+    border: round #89b4fa; /* Light blue accent */
     margin: 1;
 }
 
@@ -80,12 +72,12 @@ Label {
 
 /* Error message styling */
 .error {
-    color: var(--my-error);
+    color: #f38ba8; /* Red for errors */
     text-style: bold;
 }
 
 /* Success message styling */
 .success {
-    color: var(--my-success);
+    color: #a6e3a1; /* Green for success */
     text-style: bold;
 }
