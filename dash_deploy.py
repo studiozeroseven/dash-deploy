@@ -12,6 +12,7 @@ class DashDeployApp(App):
 
     def compose(self) -> ComposeResult:
         """Compose the UI."""
+        self.theme = "nord"
         yield Header()
         yield Container(
             Label("Welcome to the Dash App Deployment CLI!", id="title"),
