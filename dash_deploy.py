@@ -3,6 +3,7 @@ import subprocess
 from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.widgets import Header, Footer, Button, Input, Static, Label
+from asyncio import sleep  # Import sleep from asyncio
 
 class PasswordDialog(Container):
     """A custom dialog for entering the sudo password."""
@@ -184,7 +185,7 @@ class DashDeployApp(App):
     async def wait_for_password(self) -> None:
         """Wait for the password to be entered."""
         while self.password is None:
-            await self.sleep(0.1)  # Wait for the password to be set
+            await sleep(0.1)  # Use asyncio.sleep instead of self.sleep
 
 if __name__ == "__main__":
     app = DashDeployApp()
