@@ -29,5 +29,5 @@ echo "Making the installer executable..."
 chmod +x installer.sh
 
 # Run the Dash Deployment CLI installer
-echo "Starting the Dash Deployment CLI Installer..."
-sudo ./installer.sh
+echo "Starting the Dash Deployment CLI"
+python3 dash_deploy.py
