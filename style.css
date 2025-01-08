@@ -27,23 +27,20 @@ Footer {
     height: 100%;
 }
 
-/* Button styling */
+/* Center buttons */
 Button {
     width: 50%;
-    background: #89b4fa; /* Light blue accent */
-    color: #1e1e2e;      /* Dark background */
-    text-style: bold;
-    margin: 1 auto; /* Center horizontally */
+    margin: 1 0; /* Vertical margin */
+    align: center middle; /* Center horizontally */
 }
 
-/* Input field styling */
+/* Center input fields */
 Input {
     width: 50%;
-    background: #313244; /* Darker surface color */
-    color: #cdd6f4;      /* Light text color */
-    border: round #89b4fa; /* Light blue accent */
-    margin: 1 auto; /* Center horizontally */
+    margin: 1 0; /* Vertical margin */
+    align: center middle; /* Center horizontally */
 }
+
 /* Center labels */
 Label {
     width: 100%;
