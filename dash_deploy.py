@@ -14,6 +14,10 @@ class PasswordDialog(Container):
         yield Input(placeholder="Password", password=True, id="password-input")
         yield Button("Submit", id="submit-button")
 
+    def on_mount(self) -> None:
+        """Focus the input field when the dialog is mounted."""
+        self.query_one("#password-input", Input).focus()
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle the submit button press."""
         if event.button.id == "submit-button":
