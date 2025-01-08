@@ -1,22 +1,29 @@
+:root {
+    --my-background: #1e1e2e; /* Dark background */
+    --my-accent: #89b4fa;     /* Light blue accent */
+    --my-text: #cdd6f4;       /* Light text color */
+    --my-error: #f38ba8;      /* Red for errors */
+    --my-success: #a6e3a1;    /* Green for success */
+}
+
 /* General styling for the app */
 Screen {
-    layout: vertical;
-    background: $background;
-    color: $text;
+    background: var(--my-background);
+    color: var(--my-text);
 }
 
 /* Header styling */
 Header {
-    background: $accent;
-    color: $background;
+    background: var(--my-accent);
+    color: var(--my-background);
     text-style: bold;
     padding: 1;
 }
 
 /* Footer styling */
 Footer {
-    background: $accent-dark;
-    color: $background;
+    background: var(--my-accent);
+    color: var(--my-background);
     text-style: bold;
     padding: 1;
 }
@@ -31,35 +38,36 @@ Footer {
 /* Title styling */
 #title {
     text-style: bold;
-    color: $accent;
+    color: var(--my-accent);
     margin-bottom: 1;
 }
 
 /* Subtitle styling */
 #subtitle {
-    color: $text-muted;
+    color: var(--my-text);
     margin-bottom: 2;
 }
 
 /* Button styling */
 Button {
     width: 50%;
-    background: $accent;
-    color: $background;
+    background: var(--my-accent);
+    color: var(--my-background);
     text-style: bold;
     margin: 1;
 }
 
 Button:hover {
-    background: $accent-dark;
+    background: var(--my-text);
+    color: var(--my-background);
 }
 
 /* Input field styling */
 Input {
     width: 50%;
-    background: $surface;
-    color: $text;
-    border: round $accent;
+    background: var(--my-background);
+    color: var(--my-text);
+    border: round var(--my-accent);
     margin: 1;
 }
 
@@ -72,12 +80,12 @@ Label {
 
 /* Error message styling */
 .error {
-    color: $error;
+    color: var(--my-error);
     text-style: bold;
 }
 
 /* Success message styling */
 .success {
-    color: $success;
+    color: var(--my-success);
     text-style: bold;
 }
