@@ -2,28 +2,33 @@ import os
 import subprocess
 from textual.app import App, ComposeResult
 from textual.containers import Container
-from textual.widgets import Header, Footer, Button, Input, Static, Label, Dialog
+from textual.widgets import Header, Footer, Button, Input, Static, Label
 
-class PasswordDialog(Dialog):
+class PasswordDialog(Container):
     """A custom dialog for entering the sudo password."""
 
     def compose(self) -> ComposeResult:
         """Compose the password dialog."""
         yield Label("Enter sudo password:")
-        yield Input(placeholder="Password", password=True)
+        yield Input(placeholder="Password", password=True, id="password-input")
         yield Button("Submit", id="submit-button")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Handle the submit button press."""
         if event.button.id == "submit-button":
-            password = self.query_one(Input).value
-            self.dismiss(password)
+            password = self.query_one("#password-input", Input).value
+            self.app.password = password  # Store the password in the app
+            self.remove()  # Close the dialog
 
 class DashDeployApp(App):
     """A Textual CLI app to deploy a Dash app to an Ubuntu server."""
 
     CSS_PATH = "style.css"
     BINDINGS = [("q", "quit", "Quit")]
+
+    def __init__(self):
+        super().__init__()
+        self.password = None  # Store the sudo password
 
     def compose(self) -> ComposeResult:
         """Compose the UI."""
@@ -137,8 +142,8 @@ class DashDeployApp(App):
 
         if command.startswith("sudo"):
             # Show the password dialog
-            password = await self.show_password_dialog()
-            if not password:
+            await self.show_password_dialog()
+            if not self.password:
                 self.mount(Label("Error: No password provided."))
                 return
 
@@ -151,7 +156,7 @@ class DashDeployApp(App):
                 stderr=subprocess.PIPE,
                 text=True
             )
-            stdout, stderr = process.communicate(input=f"{password}\n")
+            stdout, stderr = process.communicate(input=f"{self.password}\n")
         else:
             # Run the non-sudo command
             process = subprocess.Popen(
@@ -169,12 +174,12 @@ class DashDeployApp(App):
             self.mount(Label(stdout))
         self.refresh()  # Refresh the UI
 
-    async def show_password_dialog(self) -> str:
-        """Show the password input dialog and return the password."""
+    async def show_password_dialog(self) -> None:
+        """Show the password input dialog."""
         dialog = PasswordDialog()
         self.mount(dialog)
         self.refresh()
-        return await dialog.wait_for_dismiss()
+        await dialog.wait_for_remove()  # Wait for the dialog to close
 
 if __name__ == "__main__":
     app = DashDeployApp()
