@@ -138,6 +138,7 @@ class DashDeployApp(App):
         input_widget = Input()
         self.mount(input_widget)
         self.refresh()
+        input_widget.focus()  # Focus the input widget
         return await input_widget.wait_for_input()
 
     async def run_command(self, command: str) -> None:
