@@ -101,25 +101,46 @@ class DashDeployApp(App):
     def add_step(self, message: str) -> None:
         """Display a step in the deployment process."""
         self.mount(Label(f"\n{message}\n"))
+        self.refresh()  # Refresh the UI
 
     def ask_user(self, prompt: str) -> str:
         """Ask the user for input."""
         self.mount(Label(prompt))
+        self.refresh()  # Refresh the UI
         return input()
 
     def run_command(self, command: str) -> None:
         """Run a shell command and handle sudo password prompts."""
+        self.mount(Label(f"Running: {command}"))
+        self.refresh()  # Refresh the UI
+
         if command.startswith("sudo"):
             # Ask for sudo password
             sudo_password = getpass("Enter sudo password: ")
-            command = f"echo '{sudo_password}' | sudo -S {command[5:]}"
-
-        # Run the command
-        result = subprocess.run(command, shell=True, capture_output=True, text=True)
-        if result.returncode != 0:
-            self.mount(Label(f"Error: {result.stderr}"))
+            process = subprocess.Popen(
+                command,
+                shell=True,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+            stdout, stderr = process.communicate(input=f"{sudo_password}\n")
         else:
-            self.mount(Label(result.stdout))
+            process = subprocess.Popen(
+                command,
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+            stdout, stderr = process.communicate()
+
+        if process.returncode != 0:
+            self.mount(Label(f"Error: {stderr}"))
+        else:
+            self.mount(Label(stdout))
+        self.refresh()  # Refresh the UI
 
 if __name__ == "__main__":
     app = DashDeployApp()
