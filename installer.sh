@@ -1,33 +1,28 @@
 #!/bin/bash
 
-# Installer for Dash Deployment CLI
-# Automates the setup and installation process on an Ubuntu server.
+# Bootstrap installer for the Dash Deployment CLI (Ubuntu).
+# Installs system deps, creates a venv, then launches the CLI.
 
-# Update and install system dependencies
-echo "Updating system packages..."
-sudo apt update && sudo apt upgrade -y
+set -euo pipefail
+cd "$(dirname "$0")"
 
-echo "Installing required system packages..."
-sudo apt install -y python3-pip python3-venv git
+if ! grep -qi ubuntu /etc/os-release 2>/dev/null; then
+    echo "warning: this tool assumes an Ubuntu server; continuing anyway" >&2
+fi
 
-# Clone the repository
-echo "Cloning the Dash Deployment CLI repository..."
-git clone https://github.com/yourusername/dash-deployment-cli.git
-cd dash-deployment-cli
+echo "Installing system packages (python3-venv, git)..."
+sudo apt-get update
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y install python3-venv git
 
-# Create a virtual environment
-echo "Creating a Python virtual environment..."
-python3 -m venv venv
-source venv/bin/activate
+echo "Creating the CLI virtual environment..."
+python3 -m venv .venv
+. .venv/bin/activate
 
-# Install Python dependencies
-echo "Installing Python dependencies..."
+echo "Installing the CLI's own dependencies (textual)..."
+pip install --upgrade pip
 pip install -r requirements.txt
 
-# Make the installer executable
-echo "Making the installer executable..."
-chmod +x installer.sh
-
-# Run the Dash Deployment CLI installer
-echo "Starting the Dash Deployment CLI"
-python3 dash_deploy.py
+echo "Starting the Dash Deployment CLI (dry-run first is a good idea)..."
+echo "  real run:      .venv/bin/python dash_deploy.py"
+echo "  dry run:       .venv/bin/python dash_deploy.py --dry-run"
+.venv/bin/python dash_deploy.py

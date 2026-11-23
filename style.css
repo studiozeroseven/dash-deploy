@@ -20,13 +20,6 @@ Footer {
     padding: 1;
 }
 
-/* Center the main container */
-#main-container {
-    align: center middle;
-    width: 100%;
-    height: 100%;
-}
-
 /* Center buttons */
 Button {
     width: 50%;
@@ -46,6 +39,42 @@ Label {
     width: 100%;
     text-align: center;
     margin: 1;
+}
+
+/* Main content area */
+#main {
+    width: 100%;
+    height: 100%;
+    padding: 1;
+}
+
+/* Scrolling step log */
+#steps {
+    height: 1fr;
+    margin-top: 1;
+    overflow-y: auto;
+}
+
+/* RichLog console for command output */
+#console {
+    height: auto;
+    margin: 0 0 1 0;
+}
+
+/* Sudo password dialog */
+PasswordDialog {
+    align: center middle;
+}
+
+#password-box {
+    width: 70%;
+    padding: 1 2;
+    background: #313244;
+    border: round #89b4fa;
+}
+
+#sudo-password-input {
+    width: 100%;
 }
 
 /* Title styling */

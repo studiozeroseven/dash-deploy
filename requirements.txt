@@ -1,3 +1,4 @@
-textual==0.10.0
-dash==2.11.0
-gunicorn==21.2.0
+# Runtime deps for the deployment CLI itself.
+# dash/gunicorn are installed BY the tool into the deployed app's venv -
+# they are not needed by this program.
+textual>=1.0,<4

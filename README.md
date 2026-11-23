@@ -1,180 +1,103 @@
 # Dash Deployment CLI
 
-The **Dash Deployment CLI** is a fully interactive command-line application built using the **Textual** framework. It guides users through the process of deploying a Python Dash app to an Ubuntu server. The app automates the deployment steps, making it easy for developers to deploy their Dash apps without manually running commands or configuring services.
+An interactive Textual CLI that deploys a Python Dash app to an Ubuntu server:
+apt dependencies, a real Python venv, dash + gunicorn inside that venv, an
+nginx reverse proxy, and a systemd service - with smoke tests before and
+after the switch.
 
----
+## What it does
 
-## Features
+```
+Step 1  apt-get update; install python3-venv + nginx          (sudo)
+Step 2  mkdir ~/yourapp; python3 -m venv ~/yourapp/venv
+Step 3  venv/bin/pip install dash gunicorn
+Step 4  app.py - uses yours, or bootstraps a working sample
+Step 5  local smoke test: venv python app.py, probe :8050
+Step 6  nginx server block -> proxy 127.0.0.1:8050 (sudo)
+Step 7  systemd unit: venv gunicorn binds 127.0.0.1:8050 (sudo)
+Step 8  live smoke test against the running service
+```
 
-- **Step-by-Step Guidance**: Walks users through the entire deployment process.
-- **Automated Commands**: Runs shell commands automatically to set up the server, install dependencies, and configure services.
-- **User-Friendly Interface**: Uses an interactive CLI interface with buttons, labels, and input prompts.
-- **Customizable**: Easily modify the app to suit specific deployment needs.
-- **Supports**:
-  - Python virtual environments.
-  - Dash and Gunicorn installation.
-  - Nginx configuration.
-  - Systemd service setup.
+Prompts: (1) app name (validated, becomes every file/dir name), (2) create the
+sample app.py if none exists, (3) nginx `server_name` (enter for the wildcard
+default), plus the sudo password once, up front.
 
----
+## Run it
 
-## Prerequisites
+```bash
+git clone https://github.com/studiozeroseven/dash-deploy.git
+cd dash-deploy
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
 
-Before using the Dash Deployment CLI, ensure you have the following:
+# real deployment (Ubuntu server, you will be prompted)
+python3 dash_deploy.py
 
-1. **Ubuntu Server**: A running Ubuntu server (20.04 or later recommended).
-2. **Python 3.8+**: Installed on the server.
-3. **SSH Access**: Ability to connect to the server via SSH.
-4. **Dash App Code**: Your Dash app code ready for deployment.
+# dry run - records every command, executes nothing
+python3 dash_deploy.py --dry-run
+```
 
----
+Quit with `q` or `Ctrl+C` at any point.
 
-## Installation
+## Why the old version could not deploy anything
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/studiozeroseven/dash_deploy.git
-   cd dash_deploy
-   ```
+For the record (v0.1.0 behavior, all fixed in v0.2.0 and covered by tests):
 
-2. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+- `source venv/bin/activate` ran in a child process: it changed nothing, so
+  pip/gunicorn used the system Python and the systemd unit pointed at an
+  empty venv.
+- nginx proxied to `127.0.0.1:8050` (TCP) while the systemd unit bound a
+  unix socket with `-m 007`: the proxy pointed at nothing.
+- Textual's `Input.wait_for_input()` does not exist - the very first prompt
+  could never complete.
+- All subprocess calls blocked the Textual event loop; the `python app.py`
+  step never returned (Dash runs forever), so the flow could not proceed.
+- `sudo` was called without `-S`, so the piped password was ignored; pipes
+  (`echo | sudo tee`) collided with the password on stdin.
+- Unvalidated app names allowed shell injection into every constructed command.
 
-3. **Run the CLI App**:
-   ```bash
-   python dash_deploy.py
-   ```
+## Design notes
 
-## Usage
+- Every privileged command runs as `sudo -S -p '' <cmd>` with the password
+  piped once; config files are written to a 0600 temp file and moved into
+  place with `sudo mv` (no stdin collisions, password never lands in files).
+- The sudo password lives in app memory only; the process list never shows it.
+- The generated systemd unit binds `127.0.0.1:8050` with
+  `Restart=on-failure`; nginx adds `X-Forwarded-Proto` so Dash generates
+  correct absolute URLs behind the proxy.
+- App names are validated `^[a-z][a-z0-9_-]{0,63}$` before any string joins
+  them.
 
-1. **Start the App**:
-   Run the app using the command:
-   ```bash
-   python dash_deploy.py
-   ```
+## Tests
 
-2. **Follow the Prompts**:
-   - The app will guide you through each step of the deployment process.
-   - Provide inputs when prompted (e.g., app name).
-   - The app will automatically run commands and display output.
+```bash
+pip install -r requirements-dev.txt
+python -m pytest tests/
+```
 
-3. **Deployment Steps**:
-   The app will perform the following steps:
-   - Update and install server dependencies.
-   - Set up a Python virtual environment.
-   - Install Dash and Gunicorn.
-   - Configure Nginx as a reverse proxy.
-   - Set up a systemd service to manage the Dash app.
+The e2e tests drive the full flow through a real Textual pilot in dry-run
+mode: every command is recorded and asserted (sudo prefix, venv-by-path,
+socket-vs-TCP binding, ordering), nothing is executed against your system.
+A final test imports the generated sample app with the real dash package and
+verifies the `app:server` gunicorn entrypoint.
 
-4. **Access Your Dash App**:
-   Once the deployment is complete, visit `http://your_server_ip` in your browser to access your Dash app.
+## Deployment notes
 
----
-
-## Customization
-
-You can customize the app to suit your specific needs:
-
-1. **Nginx Configuration**:
-   Modify the Nginx configuration template in the `deploy_dash_app` method to add SSL, custom domains, or other settings.
-
-2. **Systemd Service**:
-   Adjust the systemd service configuration in the `deploy_dash_app` method to change user permissions, working directories, or other parameters.
-
-3. **Styling**:
-   Add custom CSS in the `style.css` file to change the appearance of the CLI interface.
-
----
-
-## Example Deployment
-
-Here’s an example of how the app works:
-
-1. **Start the App**:
-   ```bash
-   python dash_deploy.py
-   ```
-
-2. **Welcome Screen**:
-   ```
-   Welcome to the Dash App Deployment CLI!
-   This tool will guide you through deploying your Dash app to an Ubuntu server.
-   [Start Deployment]
-   ```
-
-3. **Enter App Name**:
-   ```
-   Enter a name for your Dash app (e.g., mydashapp): mydashapp
-   ```
-
-4. **Follow the Steps**:
-   The app will automatically:
-   - Update the server.
-   - Install dependencies.
-   - Set up a virtual environment.
-   - Install Dash and Gunicorn.
-   - Configure Nginx and systemd.
-
-5. **Deployment Complete**:
-   ```
-   Deployment Complete!
-   Your Dash app is now deployed! Visit http://your_server_ip to access it.
-   ```
-
----
-
-## Troubleshooting
-
-1. **Command Errors**:
-   - If a command fails, the app will display the error message. Check the error and ensure all prerequisites are met.
-
-2. **Nginx Issues**:
-   - If Nginx fails to restart, check the configuration file at `/etc/nginx/sites-available/your_app_name`.
-
-3. **Systemd Service Issues**:
-   - If the systemd service fails to start, check the logs using:
-     ```bash
-     sudo journalctl -u your_app_name.service
-     ```
-
----
-
-## Contributing
-
-Contributions are welcome! If you’d like to contribute to this project, please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Commit your changes.
-4. Submit a pull request.
-
----
+- The target app's `app.py` must expose the Dash instance as `app` (the
+  generated sample does). The service runs its own venv's gunicorn via
+  `app:server`.
+- Dash websockets (rare in plain apps) would need additional nginx
+  upgrade headers; default Dash callbacks use XHR and work with this config.
+- The nginx default site is not touched; the new server block is additive.
+  Remove `/etc/nginx/sites-enabled/default` yourself if port 80 is served by
+  it.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-## Acknowledgments
-
-- **Textual Framework**: For providing an excellent Python CLI framework.
-- **Dash Framework**: For making it easy to build web applications in Python.
-- **Codearmo Tutorial**: For the detailed deployment guide.
-
----
+GPL-3.0 - see [LICENSE](LICENSE). (The README previously said MIT; the
+repository ships GPL v3.)
 
 ## Contact
 
-For questions or feedback, please open an issue on GitHub or contact the maintainer:
-
-- **Ian Schwartz**
-- **Email**: ian@theapk.com
-- **GitHub**: [studiozeroseven](https://github.com/studiozeroseven)
-
----
-
-Enjoy deploying your Dash apps with ease! 🚀
-```
+Ian Schwartz - [ian@theapk.com](mailto:ian@theapk.com) -
+[studiozeroseven](https://github.com/studiozeroseven)
