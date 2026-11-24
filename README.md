@@ -88,9 +88,10 @@ verifies the `app:server` gunicorn entrypoint.
   `app:server`.
 - Dash websockets (rare in plain apps) would need additional nginx
   upgrade headers; default Dash callbacks use XHR and work with this config.
-- The nginx default site is not touched; the new server block is additive.
-  Remove `/etc/nginx/sites-enabled/default` yourself if port 80 is served by
-  it.
+- The nginx default site: on stock Ubuntu it claims port 80 with
+  `server_name _` and would shadow the deployment, so step 6 removes
+  `/etc/nginx/sites-enabled/default` (the stock symlink). If YOU have a
+  real default site, back it up before deploying.
 
 ## License
 

@@ -122,6 +122,9 @@ async def test_full_happy_path_records_every_step(sandbox_home):
     # config writes use temp file + mv (no echo|tee stdin clash)
     assert any("mv <tmp> /etc/nginx/sites-available/mydashapp" in c for c in recorded)
     assert any("mv <tmp> /etc/systemd/system/mydashapp.service" in c for c in recorded)
+    assert any(
+        c == "sudo -S -p '' rm -f /etc/nginx/sites-enabled/default" for c in recorded
+    ), "the stock default site must be retired so port 80 serves the app"
     assert any(c == "sudo -S -p '' nginx -t" for c in recorded)
     assert any("systemctl restart nginx" in c for c in recorded)
     assert any("systemctl daemon-reload" in c for c in recorded)

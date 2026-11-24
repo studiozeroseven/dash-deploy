@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.1] - 2026-11-23
+
+### Fixed
+- The stock Ubuntu nginx default site claims `server_name _` on port 80 and
+  silently shadows the deployed app (you get "Welcome to nginx!" instead of
+  your Dash app). Step 6 now retires `/etc/nginx/sites-enabled/default`
+  (idempotent, only the stock symlink). Found by a live end-to-end run on a
+  fresh Ubuntu 24.04 systemd container.
+
 ## [0.2.0] - 2026-11-23
 
 ### Fixed

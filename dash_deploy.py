@@ -292,6 +292,13 @@ class DashDeployApp(App):
             ):
                 self.aborted = True
                 return
+            # The stock Ubuntu default site claims `server_name _` on port 80
+            # and would shadow (or collide with) this deployment - retire it.
+            # Idempotent and only removes the stock symlink, nothing else.
+            self._mark("Step 6b: Retire the stock nginx default site (port 80)", None)
+            if not await self._run_cmd("rm -f /etc/nginx/sites-enabled/default", sudo=True):
+                self.aborted = True
+                return
             if not await self._run_cmd("nginx -t", sudo=True):
                 self.aborted = True
                 return
